@@ -1,5 +1,6 @@
 package com.example.eventinflearnprac;
 
+import com.example.eventinflearnprac.common.TestDescription;
 import com.example.eventinflearnprac.events.Event;
 import com.example.eventinflearnprac.events.EventDto;
 import com.example.eventinflearnprac.events.EventStatus;
@@ -33,7 +34,10 @@ public class EventControllerTests {
     @Autowired
     MockMvc mockMvc;
 
+
+
     @Test
+    @TestDescription("정상적인 이벤트 생성")
     public void createEvent() throws Exception {
 
         EventDto event = EventDto.builder()
@@ -68,6 +72,7 @@ public class EventControllerTests {
 
 
     @Test
+    @TestDescription("입력 받을 수 없는 값이 들어온 이벤트 태스트 (에러)")
     public void createEvent_BadRequest() throws Exception {
 
         Event event = Event.builder()
@@ -97,6 +102,7 @@ public class EventControllerTests {
     }
 
     @Test
+    @TestDescription("입력값이 비어있는 이벤트 태스트 (에러)")
     public void createEvent_Bad_Request_Empty_Input() throws Exception {
         EventDto eventDto = EventDto.builder().build();
 
@@ -105,7 +111,9 @@ public class EventControllerTests {
                 .content(this.objectMapper.writeValueAsString(eventDto)))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
+    @TestDescription("입력값이 잘못된 이벤트 태스트 (에러)")
     public void createEvent_Bad_Request_Wrong_Input() throws Exception {
 
         EventDto eventDto = EventDto.builder()
@@ -124,7 +132,13 @@ public class EventControllerTests {
         this.mockMvc.perform(post("/api/events")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(eventDto)))
-                .andExpect(status().isBadRequest());
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists())
+//                .andExpect(jsonPath("$[0].field").exists())   -> 필드error일 경우에는 태스트가 정상 작동하지만 글로벌 애러의 경우 필드가 없기 때문에 태스트가 깨져요
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists())
+//                .andExpect(jsonPath("$[0].rejectedValue").exists()) -> 필드error일 경우에는 태스트가 정상 작동하지만 글로벌 애러의 경우 rejectedValue가 없기 때문에 태스트가 깨져요
         ;
     }
 }
