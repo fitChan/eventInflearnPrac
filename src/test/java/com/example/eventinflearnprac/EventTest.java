@@ -34,4 +34,36 @@ public class EventTest {
 
     }
 
+    @Test
+    public void testFree(){
+        //Given
+        Event event = Event.builder().
+                basePrice(0)
+                .maxPrice(0)
+                .build();
+        //when
+        event.update();
+
+        //then
+        assertThat(event.isFree()).isTrue();
+
+        event = Event.builder()
+                .basePrice(100)
+                .maxPrice(0)
+                .build();
+
+        event.update();
+
+        assertThat(event.isFree()).isFalse();
+
+        event = Event.builder()
+                .basePrice(100)
+                .maxPrice(10)
+                .build();
+
+        event.update();
+
+        assertThat(event.isFree()).isFalse();
+    }
+
 }
