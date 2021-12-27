@@ -66,4 +66,23 @@ public class EventTest {
         assertThat(event.isFree()).isFalse();
     }
 
+    @Test
+    public void testOffline(){
+        //Given
+        Event event = Event.builder().
+                location("장소있음")
+                .build();
+        //when
+        event.update();
+
+        assertThat(event.isOffline()).isTrue();
+
+        event = Event.builder().
+                build();
+        //when
+        event.update();
+
+        assertThat(event.isOffline()).isFalse();
+    }
+
 }
