@@ -42,7 +42,7 @@ public class EventTest {
                 .maxPrice(0)
                 .build();
         //when
-        event.update();
+        event.updateFree();
 
         //then
         assertThat(event.isFree()).isTrue();
@@ -52,7 +52,7 @@ public class EventTest {
                 .maxPrice(0)
                 .build();
 
-        event.update();
+        event.updateFree();
 
         assertThat(event.isFree()).isFalse();
 
@@ -61,7 +61,7 @@ public class EventTest {
                 .maxPrice(10)
                 .build();
 
-        event.update();
+        event.updateFree();
 
         assertThat(event.isFree()).isFalse();
     }
@@ -69,18 +69,19 @@ public class EventTest {
     @Test
     public void testOffline(){
         //Given
-        Event event = Event.builder().
-                location("장소있음")
+        Event event = Event.builder()
+                .location("장소있음")
                 .build();
         //when
-        event.update();
+        event.updateOffline();
 
         assertThat(event.isOffline()).isTrue();
 
-        event = Event.builder().
-                build();
+        event = Event.builder()
+                .location("   ")
+                .build();
         //when
-        event.update();
+        event.updateOffline();
 
         assertThat(event.isOffline()).isFalse();
     }
