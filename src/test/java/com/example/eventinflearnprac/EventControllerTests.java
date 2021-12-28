@@ -35,7 +35,6 @@ public class EventControllerTests {
     MockMvc mockMvc;
 
 
-
     @Test
     @TestDescription("정상적인 이벤트 생성")
     public void createEvent() throws Exception {
@@ -65,7 +64,9 @@ public class EventControllerTests {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("free").value(false))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
-                .andExpect(jsonPath("offline").value(true))
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.query-events").exists())
+                .andExpect(jsonPath("_links.update-event").exists())
         ;
     }
 
