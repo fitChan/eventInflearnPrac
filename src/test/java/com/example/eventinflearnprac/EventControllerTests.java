@@ -24,7 +24,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -77,7 +81,52 @@ public class EventControllerTests {
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.query-events").exists())
                 .andExpect(jsonPath("_links.update-event").exists())
-                .andDo(document("create-event"))
+                .andDo(document("create-event",
+                        links(
+                                linkWithRel("self").description("link to self"),
+                                linkWithRel("query-events").description("link to query events"),
+                                linkWithRel("update-event").description("link to updated new events")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.ACCEPT).description("accept Header"),
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("Content Type")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").description("event's name"),
+                                fieldWithPath("description").description("event's detail description"),
+                                fieldWithPath("beginEnrollmentDateTime").description("start of enrollment date"),
+                                fieldWithPath("closeEnrollmentDateTime").description("close of enrollment date"),
+                                fieldWithPath("beginEventDateTime").description("begin of event date"),
+                                fieldWithPath("endEventDateTime").description("end of event date"),
+                                fieldWithPath("location").description("event location(only offline not for online)"),
+                                fieldWithPath("basePrice").description("minimum price of event. if other participation pay more and participation is full, less chargers are cannot join the event."),
+                                fieldWithPath("maxPrice").description("maximum price of event"),
+                                fieldWithPath("limitOfEnrollment").description("limit of participation")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.LOCATION).description("location of response Header"),
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("Content Type")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("event's identifier"),
+                                fieldWithPath("name").description("event's name"),
+                                fieldWithPath("description").description("event's detail description"),
+                                fieldWithPath("beginEnrollmentDateTime").description("start of enrollment date"),
+                                fieldWithPath("closeEnrollmentDateTime").description("close of enrollment date"),
+                                fieldWithPath("beginEventDateTime").description("begin of event date"),
+                                fieldWithPath("endEventDateTime").description("end of event date"),
+                                fieldWithPath("location").description("event location(only offline not for online)"),
+                                fieldWithPath("basePrice").description("minimum price of event. if other participation pay more and participation is full, less chargers are cannot join the event."),
+                                fieldWithPath("maxPrice").description("maximum price of event"),
+                                fieldWithPath("limitOfEnrollment").description("limit of participation"),
+                                fieldWithPath("offline").description("online if event location is null"),
+                                fieldWithPath("free").description("free if basePrice and maxPrice are null"),
+                                fieldWithPath("eventStatus").description("DRAFT or PUBLISHED or BEGAN_ENROLLMENT (ENUM)"),
+                                fieldWithPath("_links.self.href").description("link to self"),
+                                fieldWithPath("_links.query-events.href").description("link to query events"),
+                                fieldWithPath("_links.update-event.href").description("link to update events")
+                        )
+                ))
         ;
     }
 
