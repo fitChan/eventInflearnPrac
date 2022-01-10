@@ -12,6 +12,13 @@ import java.time.LocalDateTime;
 @Setter
 @EqualsAndHashCode(of = "id")
 @Entity
+/*
+docker run --name rest -p 1234:1234 -e POSTGRES_HOST_AUTH_MET
+        HOD=trust -d postgres
+
+        도커 설정
+*/
+
 public class Event {
     @Id@GeneratedValue
     private Integer id;
