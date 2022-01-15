@@ -1,8 +1,8 @@
 package com.example.eventinflearnprac.events;
 
 
+import com.example.eventinflearnprac.common.ErrorsResource;
 import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +33,13 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
-        if(errors.hasErrors()){
-            return ResponseEntity.badRequest().body(errors);
+        if (errors.hasErrors()) {
+            return badRequest(errors);
         }
 
         eventValidator.validate(eventDto, errors);
-        if(errors.hasErrors()){
-            return ResponseEntity.badRequest().body(errors);
+        if (errors.hasErrors()) {
+            return badRequest(errors);
         }
 
         Event event = modelMapper.map(eventDto, Event.class);
@@ -53,6 +53,10 @@ public class EventController {
         eventResource.add(selfLinkBuilder.withSelfRel());
         eventResource.add(selfLinkBuilder.withRel("update-event"));
         return ResponseEntity.created(createUri).body(eventResource);
+    }
+
+    private ResponseEntity badRequest(Errors errors) {
+        return ResponseEntity.badRequest().body(ErrorsResource.modelOf(errors));
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.eventinflearnprac;
+package com.example.eventinflearnprac.events;
 
 import com.example.eventinflearnprac.events.Event;
 import org.junit.jupiter.api.Test;

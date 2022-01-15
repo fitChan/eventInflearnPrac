@@ -1,4 +1,4 @@
-package com.example.eventinflearnprac;
+package com.example.eventinflearnprac.events;
 
 import com.example.eventinflearnprac.common.RestDocsConfiguration;
 import com.example.eventinflearnprac.common.TestDescription;
@@ -201,6 +201,7 @@ public class EventControllerTests {
                 .andExpect(jsonPath("$[0].defaultMessage").exists())
                 .andExpect(jsonPath("$[0].code").exists())
 //                .andExpect(jsonPath("$[0].rejectedValue").exists()) -> 필드error일 경우에는 태스트가 정상 작동하지만 글로벌 애러의 경우 rejectedValue가 없기 때문에 태스트가 깨져요
+                .andExpect(jsonPath("_links.index").exists());
         ;
     }
 }
