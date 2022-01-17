@@ -12,7 +12,7 @@ public class ErrorsResource extends EntityModel<Errors> {
 
     public static EntityModel<Errors> modelOf(Errors errors) {
         EntityModel<Errors> errorsModel = EntityModel.of(errors);
-        errorsModel.add(linkTo(methodOn(IndexController.class)).withRel("index"));
+        errorsModel.add(linkTo(methodOn(IndexController.class).index()).withRel("index"));
         return errorsModel;
     }
 

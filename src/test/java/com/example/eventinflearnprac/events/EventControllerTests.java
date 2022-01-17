@@ -171,7 +171,8 @@ public class EventControllerTests {
         this.mockMvc.perform(post("/api/events")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(eventDto)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+        ;
     }
 
     @Test
@@ -196,12 +197,12 @@ public class EventControllerTests {
                 .content(this.objectMapper.writeValueAsString(eventDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].objectName").exists())
-//                .andExpect(jsonPath("$[0].field").exists())   -> 필드error일 경우에는 태스트가 정상 작동하지만 글로벌 애러의 경우 필드가 없기 때문에 태스트가 깨져요
-                .andExpect(jsonPath("$[0].defaultMessage").exists())
-                .andExpect(jsonPath("$[0].code").exists())
-//                .andExpect(jsonPath("$[0].rejectedValue").exists()) -> 필드error일 경우에는 태스트가 정상 작동하지만 글로벌 애러의 경우 rejectedValue가 없기 때문에 태스트가 깨져요
-                .andExpect(jsonPath("_links.index").exists());
+                .andExpect(jsonPath("errors[0].objectName").exists())
+//                .andExpect(jsonPath("errors[0].field").exists())   -> 필드error일 경우에는 태스트가 정상 작동하지만 글로벌 애러의 경우 필드가 없기 때문에 태스트가 깨져요
+                .andExpect(jsonPath("errors[0].defaultMessage").exists())
+                .andExpect(jsonPath("errors[0].code").exists())
+//                .andExpect(jsonPath("errors[0].rejectedValue").exists()) -> 필드error일 경우에는 태스트가 정상 작동하지만 글로벌 애러의 경우 rejectedValue가 없기 때문에 태스트가 깨져요
+                .andExpect(jsonPath("_links.index").exists())
         ;
     }
 }
