@@ -85,14 +85,13 @@ public class EventControllerTests {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("free").value(false))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
-                .andExpect(jsonPath("_links.self").exists())
-                .andExpect(jsonPath("_links.query-events").exists())
-                .andExpect(jsonPath("_links.update-event").exists())
+
                 .andDo(document("create-event",
                         links(
                                 linkWithRel("self").description("link to self"),
                                 linkWithRel("query-events").description("link to query events"),
-                                linkWithRel("update-event").description("link to updated new events")
+                                linkWithRel("update-event").description("link to updated new events"),
+                                linkWithRel("profile").description("link profile")
                         ),
                         requestHeaders(
                                 headerWithName(HttpHeaders.ACCEPT).description("accept Header"),
@@ -114,7 +113,7 @@ public class EventControllerTests {
                                 headerWithName(HttpHeaders.LOCATION).description("location of response Header"),
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description("Content Type")
                         ),
-                        responseFields(
+                        relaxedResponseFields(
                                 fieldWithPath("id").description("event's identifier"),
                                 fieldWithPath("name").description("event's name"),
                                 fieldWithPath("description").description("event's detail description"),
@@ -131,7 +130,8 @@ public class EventControllerTests {
                                 fieldWithPath("eventStatus").description("DRAFT or PUBLISHED or BEGAN_ENROLLMENT (ENUM)"),
                                 fieldWithPath("_links.self.href").description("link to self"),
                                 fieldWithPath("_links.query-events.href").description("link to query events"),
-                                fieldWithPath("_links.update-event.href").description("link to update events")
+                                fieldWithPath("_links.update-event.href").description("link to update events"),
+                                fieldWithPath("_links.profile.href").description("link to profile")
                         )
                 ))
         ;
@@ -211,6 +211,18 @@ public class EventControllerTests {
         ;
     }
 
+
+
+    private Event generateEvent(int i) {
+        Event event = Event.builder()
+                .name("event" + i)
+                .description("test event generate (i)")
+                .build();
+
+        return this.eventRepository.save(event);
+    }
+
+
     @Test
     @TestDescription("30개의 이벤트를 10개씩 두번째 페이지 조회하기")
     public void queryEvents() throws Exception {
@@ -232,11 +244,29 @@ public class EventControllerTests {
 
     }
 
-    private void generateEvent(int i) {
-        Event event = Event.builder()
-                .name("event" + i)
-                .description("test event generate (i)")
-                .build();
-        this.eventRepository.save(event);
+    @Test
+    @TestDescription("없는 이벤트 조회시 404 응답받기")
+    public void getEvent404() throws Exception{
+        this.mockMvc.perform(get("/api/events/1231231"))
+                .andExpect(status().isNotFound())
+        ;
     }
+
+    @Test
+    @TestDescription("기존 이벤트 중 하나 조회하기.")
+    public void queryOneEvents() throws Exception{
+        //Given
+        Event event = this.generateEvent(100);
+
+        //when
+        this.mockMvc.perform(get("/api/events/{id}", event.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").exists())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+                ;
+    }
+
 }
